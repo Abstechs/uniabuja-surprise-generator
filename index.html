@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abstech Surprise Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #result {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .photo-container {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 5px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: white;
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .compliment {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .matric {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .share-btn {
+            background: white;
+            color: #667eea;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .footer-title {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .footer-contact {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+None
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎁 Abstech Surprise!</h1>
+        <p class="subtitle">Do you want to see what Abstech has gotten for you?</p>
+        
+        <div class="input-group">
+            <label for="matricNumber">Enter Your Matric Number:</label>
+            <input type="text" id="matricNumber" placeholder="e.g., 21/208BIO/460" />
+        </div>
+
+        <button onclick="generate()">🎉 Reveal My Surprise!</button>
+        
+        <p class="error" id="error">Please enter a valid matric number</p>
+        <div class="loading" id="loading">✨ Preparing your surprise...</div>
+
+        <div id="result">
+            <div class="card" id="card">
+                <div class="photo-container">
+                    <img id="photo" src="" alt="Your Photo" onerror="handleImageError()" />
+                </div>
+                <div class="compliment" id="compliment"></div>
+                <div class="matric" id="displayMatric"></div>
+                <button class="share-btn" onclick="shareCard()">
+                    <span>📱 Share via WhatsApp</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-title">✨ Abstech Integrated Services ✨</div>
+            <div class="footer-contact">
+                📞 08069764769 | 08127427337<br>
+                💬 Chat with us on WhatsApp for more surprises!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const compliments = [
+            "May God bless you abundantly! 🙏",
+            "You're destined for greatness! 🌟",
+            "May success follow you everywhere! 🚀",
+            "You're incredibly special! 💝",
+            "May your dreams come true! ✨",
+            "You're a blessing to many! 🌺",
+            "May God grant you wisdom! 📖",
+            "You're going to do amazing things! 🎯",
+            "May your future be bright! 🌞",
+            "You're truly one of a kind! 💎",
+            "May you find favor in all you do! 👑",
+            "You're stronger than you know! 💪",
+            "May peace and joy fill your heart! 🌈",
+            "You're making a difference! 🌸",
+            "May God's grace be with you always! 🕊️",
+            "You're absolutely wonderful! 🎉",
+            "May you excel in all your endeavors! 🏆",
+            "You're a shining light! ⭐",
+            "May goodness and mercy follow you! 🙌",
+            "You're destined to inspire others! 🌠"
+        ];
+
+        function generate() {
+            const input = document.getElementById('matricNumber').value;
+            const error = document.getElementById('error');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const debug = document.getElementById('debug');
+
+            if (!input || input.trim() === '') {
+                error.style.display = 'block';
+                result.style.display = 'none';
+                return;
+            }
+
+            error.style.display = 'none';
+            result.style.display = 'none';
+            loading.style.display = 'block';
+
+            // Process matric number: trim, remove spaces, remove slashes, convert to lowercase
+            const cleanMatric = input
+                .trim()                    // Remove leading/trailing spaces
+                .replace(/\s+/g, '')       // Remove all spaces
+                .replace(/\//g, '')        // Remove all slashes
+                .toLowerCase();            // Convert to lowercase
+
+            const photoUrl = `https://portal.uniabuja.edu.ng/pictures/${cleanMatric}.jpg`;
+
+            // Random compliment
+            const randomCompliment = compliments[Math.floor(Math.random() * compliments.length)];
+
+            // Update display
+            document.getElementById('photo').src = photoUrl;
+            document.getElementById('compliment').textContent = randomCompliment;
+            document.getElementById('displayMatric').textContent = input.trim();
+
+            // Show result after a brief delay
+            setTimeout(() => {
+                loading.style.display = 'none';
+                result.style.display = 'block';
+            }, 800);
+        }
+
+        function handleImageError() {
+            const photo = document.getElementById('photo');
+            photo.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"%3E%3Crect fill="%23f0f0f0" width="200" height="200"/%3E%3Ctext x="50%25" y="45%25" text-anchor="middle" fill="%23667eea" font-size="60"%3E🎭%3C/text%3E%3Ctext x="50%25" y="65%25" text-anchor="middle" fill="%23999" font-size="14"%3EPhoto Not Found%3C/text%3E%3C/svg%3E';
+        }
+
+        function shareCard() {
+            const matric = document.getElementById('matricNumber').value.trim();
+            const compliment = document.getElementById('compliment').textContent;
+            
+            const message = `✨ *MY ABSTECH SURPRISE!* ✨\n\n${compliment}\n\n👤 Matric: ${matric}\n\n━━━━━━━━━━━━━━━━\n\n🎁 *Want YOUR own surprise?*\nAbstech has something special for you too!\n\n🔗 Try it now and see what blessing awaits you! 🌟\n\n📱 *Abstech Integrated Services*\nWhatsApp: 08069764769 | 08127427337\n\n💡 We deliver tech solutions that make you smile! 😊\n\n#AbstechSurprise #UniAbujaVibes`;
+            
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Allow Enter key to generate
+        document.getElementById('matricNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generate();
+            }
+        });
+
+        // Clear error when typing
+        document.getElementById('matricNumber').addEventListener('input', function() {
+            document.getElementById('error').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
